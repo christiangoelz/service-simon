@@ -1,3 +1,5 @@
+"""SImple Multiparty computatiON (SIMON) service for Federated Secure Computing"""
+
 from federatedsecure.server.plugins.simon.microservice import MicroserviceSimon
 
 

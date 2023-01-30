@@ -1,5 +1,5 @@
 import federatedsecure.server
-import federatedsecure.server.server.exceptions
+import federatedsecure.server.exceptions
 
 
 def create(microprotocol):
@@ -48,4 +48,4 @@ def create(microprotocol):
         from federatedsecure.services.simon.microprotocols.microprotocol_statistics_regression_ols_vertical import MicroprotocolStatisticsRegressionOLSVertical
         return MicroprotocolStatisticsRegressionOLSVertical
 
-    raise federatedsecure.server.server.exceptions.NotAvailable(microprotocol)
+    raise federatedsecure.server.exceptions.NotAvailable(microprotocol)

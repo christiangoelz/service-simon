@@ -16,21 +16,21 @@ class MicroprotocolSetIntersectionSize(Microprotocol):
 
         self.secret_key = _secrets.token_bytes(32)
 
-        self.n = len(properties['nodes'])
+        self.num_nodes = len(properties['nodes'])
 
         self.register_cache('input', Cache())
         self.register_stage(0, ['input'], self.stage_0)
 
-        for i in range(self.n-1):
-            self.register_cache('stage{}'.format(i+1), Cache())
-            self.register_stage(i+1, ['stage{}'.format(i+1)], self.stage_i)
+        for i in range(self.num_nodes - 1):
+            self.register_cache(f'stage{i+1}', Cache())
+            self.register_stage(i+1, [f'stage{i+1}'], self.stage_i)
 
-        self.register_cache('stage{}'.format(self.n), CacheFunctional(lambda x, y: set(x).intersection(set(y)), self.n, self.n))  # lambda x, y: set(x).intersection(set(y)), n, n))
-        self.register_stage(self.n, ['stage{}'.format(self.n), 'samples'], self.stage_n)
+        self.register_cache(f'stage{self.num_nodes}', CacheFunctional(lambda x, y: set(x).intersection(set(y)), self.num_nodes, self.num_nodes))  # lambda x, y: set(x).intersection(set(y)), n, n))
+        self.register_stage(self.num_nodes, [f'stage{self.num_nodes}', 'samples'], self.stage_n)
 
-        self.register_cache('samples', CacheAdditive(minimum=self.n))
+        self.register_cache('samples', CacheAdditive(minimum=self.num_nodes))
 
-        self.sizes = [0] * self.n
+        self.sizes = [0] * self.num_nodes
 
     def stage_0(self, args):
         self.network.broadcast(args['input']['samples'], 'samples')
@@ -38,21 +38,21 @@ class MicroprotocolSetIntersectionSize(Microprotocol):
 
     def stage_i(self, args):
         stage = args['stage']
-        xh = args['stage{}'.format(stage)]
-        self.sizes[(self.network.myself-stage) % self.n] = len(xh)
+        xh = args[f'stage{stage}']
+        self.sizes[(self.network.myself-stage) % self.num_nodes] = len(xh)
         xxh = self.encrypt(xh)
-        if stage+1 < self.n:
-            self.network.send_to_next_node(xxh, 'stage{}'.format(stage+1))
+        if stage+1 < self.num_nodes:
+            self.network.send_to_next_node(xxh, f'stage{stage+1}')
         else:
-            self.network.broadcast(xxh, 'stage{}'.format(stage+1))
+            self.network.broadcast(xxh, f'stage{stage+1}')
         return stage+1, None
 
     def stage_n(self, args):
-        return -1, {'inputs': self.n,
+        return -1, {'inputs': self.num_nodes,
                     'result': {
                         'samples': args['samples'],
                         'size_data': self.sizes,
-                        'size_intersection': len(args['stage{}'.format(args['stage'])])}}
+                        'size_intersection': len(args[f'stage{args["stage"]}'])}}
 
     def encrypt(self, data):
         x25519 = X25519(self.secret_key)

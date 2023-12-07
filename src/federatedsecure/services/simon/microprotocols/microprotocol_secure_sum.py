@@ -15,8 +15,6 @@ class MicroprotocolSecureSum(Microprotocol):
         self.digits_before = properties['parameters'].get('digits_before', 12)
         self.digits_after = properties['parameters'].get('digits_after', 12)
 
-        self.intermediate = 0
-
         self.register_cache('input', Cache())
         self.register_cache('samples', CacheAdditive(minimum=self.n))
         self.register_cache('intermediate', CacheAdditive(minimum=self.n))

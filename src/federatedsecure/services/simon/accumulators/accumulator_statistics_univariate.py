@@ -35,6 +35,7 @@ class AccumulatorStatisticsUnivariate(Accumulator):
         return accumulator
 
     def add(self, other):
+        """add a vector of input data to the existing data"""
         self.moments.add(other.moments)
         self.samples += other.samples
         if self.minimum > other.minimum:
@@ -45,12 +46,11 @@ class AccumulatorStatisticsUnivariate(Accumulator):
         self.harmonic += other.harmonic
 
     def update(self, data):
+        """add a single data item to the existing data"""
         self.moments.update(data)
         self.samples += 1
-        if self.minimum > data:
-            self.minimum = data
-        if self.maximum < data:
-            self.maximum = data
+        self.minimum = min(self.minimum, data)
+        self.maximum = max(self.maximum, data)
         if data > 0.0:
             self.geometric += _math.log(data)
         if data != 0.0:
@@ -106,7 +106,7 @@ class AccumulatorStatisticsUnivariate(Accumulator):
 
     def calculate_center(self):
         return self.moments.center
-    
+
     @staticmethod
     def list_outputs():
         return ['samples', 'minimum', 'maximum', 'sum', 'mean', 'harmonic_mean', 'geometric_mean',
@@ -116,67 +116,89 @@ class AccumulatorStatisticsUnivariate(Accumulator):
                 'skewness', 'kurtosis', 'kurtosis_excess', 'hyper_skewness', 'hyper_flatness']
 
     def get_samples(self):
+        """return the number of samples"""
         return self.samples
 
     def get_minimum(self):
+        """return the minimum"""
         return self.minimum
 
     def get_maximum(self):
+        """return the maximum"""
         return self.maximum
 
     def get_sum(self):
+        """return the arithmetic sum"""
         return self.moments.uncentered[0]
 
     def get_mean(self):
+        """return the arithmetic mean value"""
         return self.moments.uncentered[0] / self.samples
 
     def get_harmonic_mean(self):
+        """return the harmonic mean value"""
         return self.samples / self.harmonic
 
     def get_geometric_mean(self):
+        """return the geometric mean value"""
         return _math.exp(self.geometric / self.samples)
 
     def get_variance(self):
+        """return the observed variance"""
         return self.moments.centered[1] / (self.samples - 1.0)
 
     def get_variance_mle(self):
+        """return the MLE of the variance"""
         return self.moments.centered[1] / self.samples
 
     def get_variance_of_sample_mean(self):
+        """return the variance of the sample mean"""
         return self.get_variance() / self.samples
 
     def get_standard_deviation(self):
+        """return the observed standard deviation"""
         return _math.sqrt(self.get_variance())
 
     def get_standard_deviation_mle(self):
+        """return the MLE of the standard deviation"""
         return _math.sqrt(self.get_variance_mle())
 
     def get_standard_error_of_sample_mean(self):
+        """return the standard error of the sample mean"""
         return _math.sqrt(self.get_variance_of_sample_mean())
 
     def get_coefficient_of_variation(self):
+        """return the observed coefficient of variation"""
         return self.get_standard_deviation() / self.get_mean()
 
     def get_coefficient_of_variation_mle(self):
+        """return the MLE of the coefficient of variation"""
         return self.get_standard_deviation_mle() / self.get_mean()
 
     def get_root_mean_square(self):
+        """return the root mean square (RMS, root of 2nd raw moment)"""
         return _math.sqrt(self.calculate_raw_moment(2))
 
     def get_root_mean_square_deviation(self):
+        """return the root mean square deviation (root of 2nd central moment)"""
         return _math.sqrt(self.calculate_central_moment(2))
 
     def get_skewness(self):
+        """return the skewness (standardized 3rd moment)"""
         return self.calculate_standardized_moment(3)
 
     def get_kurtosis(self):
+        """return the kurtosis (standardized 4th moment)"""
         return self.calculate_standardized_moment(4)
 
     def get_kurtosis_excess(self):
+        """return the excess curtosis (kurtosis minus 3.0)"""
         return self.get_kurtosis() - 3.0
 
     def get_hyper_skewness(self):
+        """return the hyper-skewness (standardized 5th moment)"""
         return self.calculate_standardized_moment(5)
 
     def get_hyper_flatness(self):
+        """return the hyper-kurtosis (standardized 6th moment)"""
         return self.calculate_standardized_moment(6)

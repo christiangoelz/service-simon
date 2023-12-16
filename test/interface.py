@@ -1,12 +1,20 @@
 from federatedsecure.server.bus import Bus
 
 
+"""
+Provides a special interface that creates a local microservices bus and routes API requests to it
+"""
+
+
 class TestInterface:
 
     def __init__(self):
         self.bus = Bus()
 
     def post(self, *path, body=None):
+        """
+        route POST /representations to create a microservice
+        """
         if len(path) == 1:
             if path[0] == 'representations':
                 response = self.bus.create_representation(body)
@@ -14,6 +22,9 @@ class TestInterface:
         raise RuntimeError()
 
     def put(self, *path, body=None):
+        """
+        route PUT /representations to store some data
+        """
         if len(path) == 1:
             if path[0] == 'representations':
                 response = self.bus.upload_representation(body)
@@ -21,6 +32,9 @@ class TestInterface:
         raise RuntimeError()
 
     def patch(self, *path, body=None):
+        """
+        route PATCH /representation/{uuid} to call some member function
+        """
         if len(path) == 2:
             if path[0] == 'representation':
                 response = self.bus.call_representation(path[1], body)
@@ -30,6 +44,9 @@ class TestInterface:
         raise RuntimeError()
 
     def get(self, *path):
+        """
+        route GET to various endpoints
+        """
         if len(path) == 1:
             if path[0] == 'representations':
                 response = self.bus.list_representations()
@@ -45,6 +62,9 @@ class TestInterface:
         raise RuntimeError()
 
     def delete(self, *path):
+        """
+        route DELETE /representation/{uuid} to release some stored handle
+        """
         if len(path) == 2:
             if path[0] == 'representation':
                 self.bus.release_representation(path[1])

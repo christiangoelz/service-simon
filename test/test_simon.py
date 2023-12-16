@@ -5,15 +5,26 @@ from assertions import TestAssertions
 from interface import TestInterface
 
 
+"""
+Tests the SIMON microservice
+"""
+
+
 class TestSimon(TestAssertions):
 
+    """
+    Tests the SIMON microservice
+    """
+
     def test_basic_sum(self):
+        """tests the SecureSum microprotocol for two parties"""
         self.run_two_party_test(microprotocol='SecureSum',
                                 data_alice=123.456789,
                                 data_bob=1234.56789,
                                 correct={'sum': 1358.024679})
 
     def test_basic_sum_3p(self):
+        """tests the SecureSum microprotocol for three parties"""
         self.run_three_party_test(microprotocol='SecureSum',
                                   data_alice=123.456789,
                                   data_bob=1234.56789,
@@ -21,12 +32,14 @@ class TestSimon(TestAssertions):
                                   correct={'sum': 13703.703579})
 
     def test_secure_matrix_multiplication(self):
+        """tests the SecureMatrixMultiplication microprotocol for two parties"""
         self.run_two_party_test(microprotocol='SecureMatrixMultiplication',
                                 data_alice=[[[1, 2, 3], [4, 5, 6], [7, 8, 9]]],
                                 data_bob=[[[-1, 4, 7], [2, -5, 3], [0, 1, -5]]],
                                 correct={'product': [[3, -3, -2], [6, -3, 13], [9, -3, 28]]})
 
     def test_set_intersection(self):
+        """tests the SetIntersection microprotocol for two parties"""
         self.run_two_party_test(microprotocol='SetIntersection',
                                 data_alice=[['A', 'B', 'C', 'D', 'E', 'F', 'G'],
                                             ['E', 'C', 'B', 'A', 'D']],
@@ -36,6 +49,7 @@ class TestSimon(TestAssertions):
                                          'intersection': ['A', 'C']})
 
     def test_set_intersection_size(self):
+        """tests the SetIntersectionSize microprotocol for two parties"""
         self.run_two_party_test(microprotocol='SetIntersectionSize',
                                 data_alice=[['A', 'B', 'C', 'D', 'E', 'F', 'G'],
                                             ['E', 'C', 'B', 'A', 'D']],
@@ -43,6 +57,7 @@ class TestSimon(TestAssertions):
                                 correct={'samples': 4, 'size_intersection': 2})
 
     def test_statistics_bivariate(self):
+        """tests the StatisticsBivariate microprotocol for two parties"""
         self.run_two_party_test(microprotocol='StatisticsBivariate',
                                 data_alice=[(1.0, 2.0)],
                                 data_bob=[(2.0, 3.0)],
@@ -55,6 +70,7 @@ class TestSimon(TestAssertions):
                                          'regression_slope_only': 1.6})
 
     def test_statistics_frequency(self):
+        """tests the StatisticsFrequency microprotocol for two parties"""
         self.run_two_party_test(microprotocol='StatisticsFrequency',
                                 data_alice=['A', 'A', 'B', 'C', 'C', 'C'],
                                 data_bob=['A', 'B', 'C', 'B', 'C', 'B', 'B', 'C', 'C'],
@@ -63,6 +79,7 @@ class TestSimon(TestAssertions):
                                          'histogram': {'A': 3, 'B': 5, 'C': 7}})
 
     def test_statistics_contingency(self):
+        """tests the StatisticsContingency microprotocol for two parties"""
         self.run_two_party_test(microprotocol='StatisticsContingency',
                                 data_alice=[('smoker', 'male'), ('non-smoker', 'female'), ('smoker', 'female'),
                                             ('non-smoker', 'female'), ('smoker', 'male'), ('smoker', 'male')],
@@ -74,6 +91,7 @@ class TestSimon(TestAssertions):
                                                    'smoker': {'male': 4, 'female': 2}}})
 
     def test_statistics_contingency_vertical(self):
+        """tests the StatisticsContingencyVertical microprotocol for two parties"""
         self.run_two_party_test(microprotocol='StatisticsContingencyVertical',
                                 data_alice=[('A', 'male'), ('B', 'female'), ('C', 'male'),
                                             ('D', 'female'), ('E', 'male'), ('F', 'male')],
@@ -84,6 +102,7 @@ class TestSimon(TestAssertions):
                                                    'female': {'non-smoker': 1, 'smoker': 1}}})
 
     def test_statistics_univariate(self):
+        """tests the StatisticsUnivariate microprotocol for two parties"""
         self.run_two_party_test(microprotocol='StatisticsUnivariate',
                                 data_alice=[1.0, 2.0, 3.0, 4.0, 5.0],
                                 data_bob=[6.0, 7.0, 8.0, 9.0, 10.0],
@@ -111,12 +130,15 @@ class TestSimon(TestAssertions):
                                          'hyper_flatness': 3.7033976124885215794})
 
     def test_statistics_regression_OLS_vertical(self):
+        """tests the StatisticsRegressionOLSVertical microprotocol for two parties"""
         self.run_two_party_test(microprotocol='StatisticsRegressionOLSVertical',
                                 data_alice=[[[1.0, 2.0, 0.0], [2.0, 1.0, 1.0], [0.0, 4.0, 3.0]]],
                                 data_bob=[[17.0, 23.0, 45.0]],
                                 correct={'mle': [[5.0, 6.0, 7.0]]})
 
     def run_two_party_test(self, microprotocol, data_alice, data_bob, correct):
+
+        """creates two local busses on a synthetic interface and runs two-party computation"""
 
         interface_a = TestInterface()
         interface_b = TestInterface()
@@ -157,6 +179,8 @@ class TestSimon(TestAssertions):
             self.outer_assertion(correct[key], result_a['result'][key], key)
 
     def run_three_party_test(self, microprotocol, data_alice, data_bob, data_charlie, correct):
+
+        """creates three local busses on a synthetic interface and runs three-party computation"""
 
         interface_a = TestInterface()
         interface_b = TestInterface()

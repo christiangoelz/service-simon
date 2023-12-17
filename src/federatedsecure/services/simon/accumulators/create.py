@@ -8,8 +8,8 @@ def create(accumulator_name):
         return AccumulatorBasicMinimumMaximum
 
     if accumulator_name == 'SecureSum':
-        from federatedsecure.services.simon.accumulators.accumulator_basic_sum import AccumulatorSecureSum
-        return AccumulatorSecureSum
+        from federatedsecure.services.simon.accumulators.accumulator_basic_sum import AccumulatorBasicSum
+        return AccumulatorBasicSum
 
     if accumulator_name == 'SecureMatrixMultiplication':
         from federatedsecure.services.simon.accumulators.accumulator_generic import AccumulatorGeneric

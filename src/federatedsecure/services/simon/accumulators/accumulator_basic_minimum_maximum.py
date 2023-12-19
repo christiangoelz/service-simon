@@ -3,6 +3,8 @@ from federatedsecure.services.simon.accumulators.accumulator import Accumulator
 
 class AccumulatorBasicMinimumMaximum(Accumulator):
 
+    """an accumulator that keeps track of the smallest and largest data item it has seen"""
+
     def __init__(self, _=None):
         self.samples = 0
         self.minimum = None

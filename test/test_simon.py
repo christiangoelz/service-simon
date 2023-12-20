@@ -38,6 +38,12 @@ class TestSimon(TestAssertions):
                                 data_bob=[[[-1, 4, 7], [2, -5, 3], [0, 1, -5]]],
                                 correct={'product': [[3, -3, -2], [6, -3, 13], [9, -3, 28]]})
 
+    def test_secure_median(self):
+        self.run_two_party_test(microprotocol='SecureMedian',
+                                data_alice=[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                data_bob=[10, 11, 12, 13, 14, 15, 16, 17, 18],
+                                correct={'median': 9.5})
+
     def test_set_intersection(self):
         """tests the SetIntersection microprotocol for two parties"""
         self.run_two_party_test(microprotocol='SetIntersection',

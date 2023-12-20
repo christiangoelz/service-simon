@@ -3,6 +3,10 @@ import federatedsecure.server
 
 def create(accumulator_name):
 
+    if accumulator_name == 'FindKRank':
+        from federatedsecure.services.simon.accumulators.accumulator_find_rank import AccumulatorFindKRank
+        return AccumulatorFindKRank
+
     if accumulator_name == 'MinimumMaximum':
         from federatedsecure.services.simon.accumulators.accumulator_basic_minimum_maximum import AccumulatorBasicMinimumMaximum
         return AccumulatorBasicMinimumMaximum
@@ -14,6 +18,10 @@ def create(accumulator_name):
     if accumulator_name == 'SecureMatrixMultiplication':
         from federatedsecure.services.simon.accumulators.accumulator_generic import AccumulatorGeneric
         return AccumulatorGeneric
+
+    if accumulator_name == 'SecureMedian':
+        from federatedsecure.services.simon.accumulators.accumulator_basic_array import AccumulatorBasicArray
+        return AccumulatorBasicArray
 
     if accumulator_name == 'SetIntersection':
         from federatedsecure.services.simon.accumulators.accumulator_set_intersection import AccumulatorSetIntersection

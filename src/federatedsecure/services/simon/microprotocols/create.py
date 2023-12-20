@@ -4,6 +4,10 @@ import federatedsecure.server.exceptions
 
 def create(microprotocol):
 
+    if microprotocol == 'FindKRank':
+        from federatedsecure.services.simon.microprotocols.microprotocol_find_rank import MicroprotocolFindKRank
+        return MicroprotocolFindKRank
+
     if microprotocol == 'MinimumMaximum':
         from federatedsecure.services.simon.microprotocols.microprotocol_minimum_maximum import MicroprotocolMinimumMaximum
         return MicroprotocolMinimumMaximum
@@ -15,6 +19,10 @@ def create(microprotocol):
     if microprotocol == 'SecureMatrixMultiplication':
         from federatedsecure.services.simon.microprotocols.microprotocol_secure_matrix_multiplication import MicroprotocolSecureMatrixMultiplication
         return MicroprotocolSecureMatrixMultiplication
+
+    if microprotocol == 'SecureMedian':
+        from federatedsecure.services.simon.microprotocols.microprotocol_secure_median import MicroprotocolSecureMedian
+        return MicroprotocolSecureMedian
 
     if microprotocol == 'SetIntersection':
         from federatedsecure.services.simon.microprotocols.microprotocol_set_intersection import MicroprotocolSetIntersection

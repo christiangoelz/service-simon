@@ -4,6 +4,15 @@ from federatedsecure.services.simon.caches.cache import Cache
 from federatedsecure.services.simon.caches.additive import CacheAdditive
 from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
 
+"""
+Implements FIND-RANKED-ELEMENT-MULTIPARTY from [1].
+
+[1] Aggarwal, G., Mishra, N. & Pinkas, B. Secure Computation of the Median
+(and Other Elements of Specified Ranks). J Cryptol 23, 373–401 (2010).
+https://doi.org/10.1007/s00145-010-9059-9
+"""
+
+
 class MicroprotocolSecureMedian(Microprotocol):
 
     def __init__(self, microservice, properties, myself):

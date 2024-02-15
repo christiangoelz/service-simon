@@ -3,9 +3,9 @@ import federatedsecure.server
 
 def create(accumulator_name):
 
-    if accumulator_name == 'FindKRank':
-        from federatedsecure.services.simon.accumulators.accumulator_find_rank import AccumulatorFindKRank
-        return AccumulatorFindKRank
+    if accumulator_name == 'KthElement':
+        from federatedsecure.services.simon.accumulators.accumulator_kth_element import AccumulatorKthElement
+        return AccumulatorKthElement
 
     if accumulator_name == 'MinimumMaximum':
         from federatedsecure.services.simon.accumulators.accumulator_basic_minimum_maximum import AccumulatorBasicMinimumMaximum

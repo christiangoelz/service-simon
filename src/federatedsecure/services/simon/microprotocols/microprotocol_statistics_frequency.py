@@ -3,8 +3,10 @@ import secrets as _secrets
 from federatedsecure.services.simon.caches.cache import Cache
 from federatedsecure.services.simon.caches.additive import CacheAdditive
 from federatedsecure.services.simon.caches.functional import CacheFunctional
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
-from federatedsecure.services.simon.accumulators.accumulator_statistics_frequency import AccumulatorStatisticsFrequency
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+from federatedsecure.services.simon.accumulators.\
+    accumulator_statistics_frequency import AccumulatorStatisticsFrequency
 
 
 class MicroprotocolStatisticsFrequency(Microprotocol):
@@ -17,9 +19,12 @@ class MicroprotocolStatisticsFrequency(Microprotocol):
         self.n = self.network.count
 
         self.register_cache('input', Cache())
-        self.register_cache('keys', CacheFunctional(lambda x, y: set(x).union(set(y)), self.n, self.n))
-        self.register_cache('checkpoint2', CacheAdditive(minimum=self.n))
-        self.register_cache('checkpoint3', CacheAdditive(minimum=self.n))
+        self.register_cache('keys', CacheFunctional(
+            lambda x, y: set(x).union(set(y)), self.n, self.n))
+        self.register_cache('checkpoint2',
+                            CacheAdditive(minimum=self.n))
+        self.register_cache('checkpoint3',
+                            CacheAdditive(minimum=self.n))
 
         self.register_stage(0, ['input'], self.stage_0)
         self.register_stage(1, ['keys'], self.stage_1)
@@ -49,12 +54,12 @@ class MicroprotocolStatisticsFrequency(Microprotocol):
         self.network.broadcast(0, 'checkpoint2')
         return 2, None
 
-    def stage_2(self, args):
+    def stage_2(self, _):
         self.register_stage(4, self.tags.keys(), self.stage_final)
         self.network.broadcast(0, 'checkpoint3')
         return 3, None
 
-    def stage_3(self, args):
+    def stage_3(self, _):
         for tag in self.tags:
             self.start_pipeline('SecureSum', tag, self.tags[tag])
         return 4, None
@@ -63,13 +68,13 @@ class MicroprotocolStatisticsFrequency(Microprotocol):
 
         histogram = {}
         mode = None
-        max = -1
+        maxi = -1
         for tag in args:
             if tag == 'stage':
                 continue
             histogram[tag[4:]] = args[tag]['sum']
-            if args[tag]['sum'] > max:
-                max = args[tag]['sum']
+            if args[tag]['sum'] > maxi:
+                maxi = args[tag]['sum']
                 mode = tag[4:]
 
         return -1, {'inputs': self.n, 'result': {

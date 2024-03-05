@@ -1,7 +1,9 @@
 import math as _math
 
-from federatedsecure.services.simon.accumulators.accumulator import Accumulator
-from federatedsecure.services.simon.accumulators.accumulator_statistics_univariate import AccumulatorStatisticsUnivariate
+from federatedsecure.services.simon.accumulators.\
+     accumulator import Accumulator
+from federatedsecure.services.simon.accumulators.\
+     accumulator_statistics_univariate import AccumulatorStatisticsUnivariate
 
 
 class AccumulatorStatisticsBivariate(Accumulator):
@@ -19,9 +21,12 @@ class AccumulatorStatisticsBivariate(Accumulator):
     @staticmethod
     def deserialize(dictionary):
         accumulator = AccumulatorStatisticsBivariate()
-        accumulator.accumulator_x = AccumulatorStatisticsUnivariate.deserialize(dictionary['accumulator_x'])
-        accumulator.accumulator_y = AccumulatorStatisticsUnivariate.deserialize(dictionary['accumulator_y'])
-        accumulator.accumulator_xy = AccumulatorStatisticsUnivariate.deserialize(dictionary['accumulator_xy'])
+        accumulator.accumulator_x = AccumulatorStatisticsUnivariate.\
+            deserialize(dictionary['accumulator_x'])
+        accumulator.accumulator_y = AccumulatorStatisticsUnivariate.\
+            deserialize(dictionary['accumulator_y'])
+        accumulator.accumulator_xy = AccumulatorStatisticsUnivariate.\
+            deserialize(dictionary['accumulator_xy'])
         return accumulator
 
     def add(self, other):
@@ -41,33 +46,49 @@ class AccumulatorStatisticsBivariate(Accumulator):
         self.accumulator_xy.finalize()
 
     def encrypt_data_for_upload(self, nonce):
-        return {'accumulator_x': self.accumulator_x.encrypt_data_for_upload(nonce),
-                'accumulator_y': self.accumulator_y.encrypt_data_for_upload(nonce),
-                'accumulator_xy': self.accumulator_xy.encrypt_data_for_upload(nonce, power=2)}
+        return {'accumulator_x':
+                self.accumulator_x.encrypt_data_for_upload(nonce),
+                'accumulator_y':
+                self.accumulator_y.encrypt_data_for_upload(nonce),
+                'accumulator_xy':
+                self.accumulator_xy.encrypt_data_for_upload(nonce,
+                                                            power=2)}
 
     @staticmethod
     def decrypt_result_from_download(encrypted, nonce):
-        decryption_powers = {'samples': 0, 'covariance_mle': 2, 'covariance': 2, 'correlation_coefficient': 0,
-                             'regression_slope': 0, 'regression_interceipt': 1, 'regression_slope_only': 0}
+        decryption_powers = {'samples': 0,
+                             'covariance_mle': 2,
+                             'covariance': 2,
+                             'correlation_coefficient': 0,
+                             'regression_slope': 0,
+                             'regression_intercept': 1,
+                             'regression_slope_only': 0}
         return nonce.decrypt_dictionary_numerical(encrypted, decryption_powers)
 
     def get_samples(self):
         return self.accumulator_xy.get_samples()
 
     def get_covariance_mle(self):
-        return self.accumulator_xy.get_mean() - self.accumulator_x.get_mean() * self.accumulator_y.get_mean()
+        return (self.accumulator_xy.get_mean()
+                - self.accumulator_x.get_mean()
+                * self.accumulator_y.get_mean())
 
     def get_covariance(self):
-        return self.get_covariance_mle() / (1.0 - 1.0 / self.accumulator_xy.get_samples())
+        return (self.get_covariance_mle()
+                / (1.0 - 1.0 / self.accumulator_xy.get_samples()))
 
     def get_correlation_coefficient(self):
-        return self.get_covariance() / _math.sqrt(self.accumulator_x.get_variance() * self.accumulator_y.get_variance())
+        return (self.get_covariance()
+                / _math.sqrt(self.accumulator_x.get_variance()
+                             * self.accumulator_y.get_variance()))
 
     def get_regression_slope(self):
         return self.get_covariance() / self.accumulator_x.get_variance()
 
     def get_regression_interceipt(self):
-        return self.accumulator_y.get_mean() - self.get_regression_slope() * self.accumulator_x.get_mean()
+        return (self.accumulator_y.get_mean()
+                - self.get_regression_slope() * self.accumulator_x.get_mean())
 
     def get_regression_slope_only(self):
-        return self.accumulator_xy.get_mean() / self.accumulator_x.calculate_raw_moment(2)
+        return (self.accumulator_xy.get_mean()
+                / self.accumulator_x.calculate_raw_moment(2))

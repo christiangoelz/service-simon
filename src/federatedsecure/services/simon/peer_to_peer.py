@@ -27,7 +27,8 @@ class PeerToPeer:
         if isinstance(self.nodes[receiver], str):
             api = federatedsecure.client.Api(url=self.nodes[receiver])
         else:
-            api = federatedsecure.client.Api(interface=self.nodes[receiver])  # for testing purposes
+            api = federatedsecure.client.Api(interface=self.nodes[receiver])
+            # for testing purposes
         microservice = api.create(**self.endpoint)
         microservice.peer_to_peer(callback=self.task_id,
                                   body={

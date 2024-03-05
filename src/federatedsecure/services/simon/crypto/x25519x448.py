@@ -46,7 +46,8 @@ class X25519X448:
 
     def encode_u_coordinate(self, u):
         u = u % self.p
-        return bytes([((u >> 8 * i) & 0xff) for i in range((self.bits + 7) // 8)])
+        return bytes([((u >> 8 * i) & 0xff)
+                      for i in range((self.bits + 7) // 8)])
 
     def montgomery(self, k, u):
         x_1 = u

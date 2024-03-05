@@ -1,6 +1,8 @@
 from federatedsecure.services.simon.caches.cache import Cache
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
-from federatedsecure.services.simon.accumulators.accumulator_statistics_univariate import AccumulatorStatisticsUnivariate
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+from federatedsecure.services.simon.accumulators.\
+    accumulator_statistics_univariate import AccumulatorStatisticsUnivariate
 
 
 class MicroprotocolStatisticsUnivariate(Microprotocol):
@@ -26,24 +28,38 @@ class MicroprotocolStatisticsUnivariate(Microprotocol):
         self.register_cache('minmax', Cache())
 
         self.register_stage(0, ['input'], self.stage_0)
-        self.register_stage(1, ['uncentered_0', 'uncentered_1', 'uncentered_2', 'uncentered_3', 'uncentered_4',
-                                'uncentered_5', 'samples', 'geometric', 'harmonic', 'minmax'], self.stage_1)
+        self.register_stage(1, ['uncentered_0', 'uncentered_1',
+                                'uncentered_2', 'uncentered_3',
+                                'uncentered_4', 'uncentered_5',
+                                'samples', 'geometric',
+                                'harmonic', 'minmax'], self.stage_1)
 
         self.input = None
         self.result_cache = AccumulatorStatisticsUnivariate()
 
     def stage_0(self, args):
         self.input = AccumulatorStatisticsUnivariate.deserialize(args['input'])
-        self.start_pipeline('SecureSum', 'uncentered_0', self.input.moments.uncentered[0])
-        self.start_pipeline('SecureSum', 'uncentered_1', self.input.moments.uncentered[1])
-        self.start_pipeline('SecureSum', 'uncentered_2', self.input.moments.uncentered[2])
-        self.start_pipeline('SecureSum', 'uncentered_3', self.input.moments.uncentered[3])
-        self.start_pipeline('SecureSum', 'uncentered_4', self.input.moments.uncentered[4])
-        self.start_pipeline('SecureSum', 'uncentered_5', self.input.moments.uncentered[5])
-        self.start_pipeline('SecureSum', 'samples', self.input.samples)
-        self.start_pipeline('SecureSum', 'geometric', self.input.geometric)
-        self.start_pipeline('SecureSum', 'harmonic', self.input.harmonic)
-        self.start_pipeline('MinimumMaximum', 'minmax', [{'minimum': self.input.minimum, 'maximum': self.input.maximum}])
+        self.start_pipeline('SecureSum', 'uncentered_0',
+                            self.input.moments.uncentered[0])
+        self.start_pipeline('SecureSum', 'uncentered_1',
+                            self.input.moments.uncentered[1])
+        self.start_pipeline('SecureSum', 'uncentered_2',
+                            self.input.moments.uncentered[2])
+        self.start_pipeline('SecureSum', 'uncentered_3',
+                            self.input.moments.uncentered[3])
+        self.start_pipeline('SecureSum', 'uncentered_4',
+                            self.input.moments.uncentered[4])
+        self.start_pipeline('SecureSum', 'uncentered_5',
+                            self.input.moments.uncentered[5])
+        self.start_pipeline('SecureSum', 'samples',
+                            self.input.samples)
+        self.start_pipeline('SecureSum', 'geometric',
+                            self.input.geometric)
+        self.start_pipeline('SecureSum', 'harmonic',
+                            self.input.harmonic)
+        self.start_pipeline('MinimumMaximum', 'minmax',
+                            [{'minimum': self.input.minimum,
+                              'maximum': self.input.maximum}])
         return 1, None
 
     def stage_1(self, args):
@@ -60,6 +76,10 @@ class MicroprotocolStatisticsUnivariate(Microprotocol):
         self.result_cache.maximum = args['minmax']['maximum']
         self.result_cache.moments.samples = self.result_cache.samples
         self.result_cache.moments.center = 0.0
-        self.result_cache.moments.centered = [x for x in self.result_cache.moments.uncentered]
-        self.result_cache.moments.set_center(self.result_cache.moments.uncentered[0] / self.result_cache.samples)
-        return -1, {'inputs': self.n, 'result': self.result_cache.evaluate_to_dict()}
+        self.result_cache.moments.centered = \
+            [x for x in self.result_cache.moments.uncentered]
+        self.result_cache.moments.set_center(
+            self.result_cache.moments.uncentered[0]
+            / self.result_cache.samples)
+        return -1, {'inputs': self.n,
+                    'result': self.result_cache.evaluate_to_dict()}

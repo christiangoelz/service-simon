@@ -1,6 +1,8 @@
 from federatedsecure.services.simon.caches.cache import Cache
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
-from federatedsecure.services.simon.accumulators.accumulator_statistics_bivariate import AccumulatorStatisticsBivariate
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+from federatedsecure.services.simon.accumulators.\
+    accumulator_statistics_bivariate import AccumulatorStatisticsBivariate
 
 
 class MicroprotocolStatisticsBivariate(Microprotocol):
@@ -46,27 +48,47 @@ class MicroprotocolStatisticsBivariate(Microprotocol):
         self.register_cache('xy_minmax', Cache())
 
         self.register_stage(0, ['input'], self.stage_0)
-        self.register_stage(1, ['x_uncentered_0', 'x_uncentered_1', 'x_uncentered_2', 'x_uncentered_3', 'x_uncentered_4',
-                                'x_uncentered_5', 'x_samples', 'x_geometric', 'x_harmonic', 'x_minmax'], self.stage_x)
-        self.register_stage(2, ['y_uncentered_0', 'y_uncentered_1', 'y_uncentered_2', 'y_uncentered_3', 'y_uncentered_4',
-                                'y_uncentered_5', 'y_samples', 'y_geometric', 'y_harmonic', 'y_minmax'], self.stage_y)
-        self.register_stage(3, ['xy_uncentered_0', 'xy_uncentered_1', 'xy_uncentered_2', 'xy_uncentered_3', 'xy_uncentered_4',
-                                'xy_uncentered_5', 'xy_samples', 'xy_geometric', 'xy_harmonic', 'xy_minmax'], self.stage_xy)
+        self.register_stage(1, ['x_uncentered_0', 'x_uncentered_1',
+                                'x_uncentered_2', 'x_uncentered_3',
+                                'x_uncentered_4', 'x_uncentered_5',
+                                'x_samples', 'x_geometric', 'x_harmonic',
+                                'x_minmax'], self.stage_x)
+        self.register_stage(2, ['y_uncentered_0', 'y_uncentered_1',
+                                'y_uncentered_2', 'y_uncentered_3',
+                                'y_uncentered_4', 'y_uncentered_5',
+                                'y_samples', 'y_geometric', 'y_harmonic',
+                                'y_minmax'], self.stage_y)
+        self.register_stage(3, ['xy_uncentered_0', 'xy_uncentered_1',
+                                'xy_uncentered_2', 'xy_uncentered_3',
+                                'xy_uncentered_4', 'xy_uncentered_5',
+                                'xy_samples', 'xy_geometric',
+                                'xy_harmonic', 'xy_minmax'], self.stage_xy)
 
         self.input = None
         self.result_cache = AccumulatorStatisticsBivariate()
 
     def start_pipelines(self, prefix, accumulator):
-        self.start_pipeline('SecureSum', prefix+'uncentered_0', accumulator.moments.uncentered[0])
-        self.start_pipeline('SecureSum', prefix+'uncentered_1', accumulator.moments.uncentered[1])
-        self.start_pipeline('SecureSum', prefix+'uncentered_2', accumulator.moments.uncentered[2])
-        self.start_pipeline('SecureSum', prefix+'uncentered_3', accumulator.moments.uncentered[3])
-        self.start_pipeline('SecureSum', prefix+'uncentered_4', accumulator.moments.uncentered[4])
-        self.start_pipeline('SecureSum', prefix+'uncentered_5', accumulator.moments.uncentered[5])
-        self.start_pipeline('SecureSum', prefix+'samples', accumulator.samples)
-        self.start_pipeline('SecureSum', prefix+'geometric', accumulator.geometric)
-        self.start_pipeline('SecureSum', prefix+'harmonic', accumulator.harmonic)
-        self.start_pipeline('MinimumMaximum', prefix+'minmax', [{'minimum': accumulator.minimum, 'maximum': accumulator.maximum}])
+        self.start_pipeline('SecureSum', prefix+'uncentered_0',
+                            accumulator.moments.uncentered[0])
+        self.start_pipeline('SecureSum', prefix+'uncentered_1',
+                            accumulator.moments.uncentered[1])
+        self.start_pipeline('SecureSum', prefix+'uncentered_2',
+                            accumulator.moments.uncentered[2])
+        self.start_pipeline('SecureSum', prefix+'uncentered_3',
+                            accumulator.moments.uncentered[3])
+        self.start_pipeline('SecureSum', prefix+'uncentered_4',
+                            accumulator.moments.uncentered[4])
+        self.start_pipeline('SecureSum', prefix+'uncentered_5',
+                            accumulator.moments.uncentered[5])
+        self.start_pipeline('SecureSum', prefix+'samples',
+                            accumulator.samples)
+        self.start_pipeline('SecureSum', prefix+'geometric',
+                            accumulator.geometric)
+        self.start_pipeline('SecureSum', prefix+'harmonic',
+                            accumulator.harmonic)
+        self.start_pipeline('MinimumMaximum', prefix+'minmax',
+                            [{'minimum': accumulator.minimum,
+                              'maximum': accumulator.maximum}])
 
     def stage_0(self, args):
         self.input = AccumulatorStatisticsBivariate.deserialize(args['input'])
@@ -89,8 +111,10 @@ class MicroprotocolStatisticsBivariate(Microprotocol):
         accumulator.maximum = args[prefix+'minmax']['maximum']
         accumulator.moments.samples = accumulator.samples
         accumulator.moments.center = 0.0
-        accumulator.moments.centered = [x for x in accumulator.moments.uncentered]
-        accumulator.moments.set_center(accumulator.moments.uncentered[0] / accumulator.samples)
+        accumulator.moments.centered = \
+            [x for x in accumulator.moments.uncentered]
+        accumulator.moments.set_center(accumulator.moments.uncentered[0]
+                                       / accumulator.samples)
 
     def stage_x(self, args):
         self.stage_z(args, "x_", self.result_cache.accumulator_x)
@@ -102,4 +126,5 @@ class MicroprotocolStatisticsBivariate(Microprotocol):
 
     def stage_xy(self, args):
         self.stage_z(args, "xy_", self.result_cache.accumulator_xy)
-        return -1, {'inputs': self.n, 'result': self.result_cache.evaluate_to_dict()}
+        return -1, {'inputs': self.n,
+                    'result': self.result_cache.evaluate_to_dict()}

@@ -24,7 +24,8 @@ class AccumulatorStatisticsFrequency(Accumulator):
     def add(self, other):
         self.samples += other.samples
         for item in other.histogram:
-            self.histogram[item] = self.histogram.get(item, 0) + other.histogram[item]
+            self.histogram[item] = (
+                    self.histogram.get(item, 0) + other.histogram[item])
 
     def update(self, key, value=1):
         self.samples = self.samples + value

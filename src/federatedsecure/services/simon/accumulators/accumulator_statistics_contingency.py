@@ -27,14 +27,16 @@ class AccumulatorStatisticsContingency(Accumulator):
             if histogram not in self.table:
                 self.table[histogram] = {}
             for item in other.table[histogram]:
-                self.table[histogram][item] = self.table[histogram].get(item, 0) \
-                                              + other.table[histogram][item]
+                self.table[histogram][item] = (
+                    self.table[histogram].get(item, 0)
+                    + other.table[histogram][item])
 
     def update(self, data, count=1):
         (histogram, item) = data
         if histogram not in self.table:
             self.table[histogram] = {}
-        self.table[histogram][item] = self.table[histogram].get(item, 0) + count
+        self.table[histogram][item] = (
+                self.table[histogram].get(item, 0) + count)
         self.samples = self.samples + count
 
     def finalize(self):

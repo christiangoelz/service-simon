@@ -10,8 +10,11 @@ class Microprotocol:
 
         self.microservice = microservice
         self.uuid = properties['task_id']
-        self.network = PeerToPeer({'namespace': "federatedsecure", 'protocol': "Simon"},
-                                  properties['task_id'], properties, myself)
+        self.network = PeerToPeer(
+            {'namespace': "federatedsecure", 'protocol': "Simon"},
+            properties['task_id'],
+            properties,
+            myself)
         self.stage = 0
         self.stages = {}
         self.caches = {}
@@ -56,7 +59,10 @@ class Microprotocol:
             if stage_after == -1:
                 self.result = ret
                 if self.parent_id is not None:
-                    message = {'token': self.parent_token, 'sender': self.network.myself, 'receiver': self.network.myself, 'body': ret['result']}
+                    message = {'token': self.parent_token,
+                               'sender': self.network.myself,
+                               'receiver': self.network.myself,
+                               'body': ret['result']}
                     task = self.microservice.get_task(task_id=self.parent_id)
                     task.microprotocol.process(message)
             else:
@@ -77,8 +83,13 @@ class Microprotocol:
         if isinstance(node, str):
             api = federatedsecure.client.Api(url=node)
         else:
-            api = federatedsecure.client.Api(interface=node)  # for local testing
-        microservice = api.create(namespace="federatedsecure", protocol="Simon")
-        return microservice.create_task(microprotocol=microprotocol, network=network,
-                                        parent={'parent_id': parent_id, 'parent_token': token},
-                                        task_id=str(_uuid.uuid5(_uuid.UUID(parent_id), token)))
+            # for local testing
+            api = federatedsecure.client.Api(interface=node)
+        microservice = api.create(namespace="federatedsecure",
+                                  protocol="Simon")
+        return microservice.create_task(microprotocol=microprotocol,
+                                        network=network,
+                                        parent={'parent_id': parent_id,
+                                                'parent_token': token},
+                                        task_id=str(_uuid.uuid5(
+                                            _uuid.UUID(parent_id), token)))

@@ -2,11 +2,16 @@ import binascii as _binascii
 import secrets as _secrets
 import hashlib as _hashlib
 
-from federatedsecure.services.simon.caches.cache import Cache
-from federatedsecure.services.simon.caches.additive import CacheAdditive
-from federatedsecure.services.simon.caches.functional import CacheFunctional
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
-from federatedsecure.services.simon.crypto.x25519x448 import X25519
+from federatedsecure.services.simon.caches.cache \
+    import Cache
+from federatedsecure.services.simon.caches.additive \
+    import CacheAdditive
+from federatedsecure.services.simon.caches.functional \
+    import CacheFunctional
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+from federatedsecure.services.simon.crypto.x25519x448 \
+    import X25519
 
 
 class MicroprotocolSetIntersection(Microprotocol):
@@ -25,14 +30,21 @@ class MicroprotocolSetIntersection(Microprotocol):
             self.register_cache('stage{}'.format(i+1), Cache())
             self.register_stage(i+1, ['stage{}'.format(i+1)], self.stage_i)
 
-        self.register_cache('stage{}'.format(self.n), CacheFunctional(lambda x, y: set(x).intersection(set(y)), self.n, self.n))
-        self.register_stage(self.n, ['stage{}'.format(self.n)], self.stage_n)
+        self.register_cache('stage{}'.format(self.n),
+                            CacheFunctional(lambda x, y:
+                                            set(x).intersection(set(y)),
+                                            self.n, self.n))
+        self.register_stage(self.n,
+                            ['stage{}'.format(self.n)],
+                            self.stage_n)
 
         self.register_cache('reverse', Cache())
-        self.register_stage(self.n+1, ['reverse'], self.stage_reverse)
+        self.register_stage(self.n+1,
+                            ['reverse'], self.stage_reverse)
 
         self.register_cache('final', Cache())
-        self.register_stage(self.n+2, ['final'], self.stage_final)
+        self.register_stage(self.n+2,
+                            ['final'], self.stage_final)
 
         self.sizes = [0] * self.n
         self.lut = {}
@@ -80,8 +92,10 @@ class MicroprotocolSetIntersection(Microprotocol):
         return -1, {'inputs': self.n,
                     'result': {
                         'size_intersection': len(args['final']),
-                        'intersection': [self.input_lut[enc] for enc in args['final']]}}
+                        'intersection': [self.input_lut[enc]
+                                         for enc in args['final']]}}
 
     def encrypt(self, data):
         x25519 = X25519(self.secret_key)
-        return [_binascii.hexlify(x25519.encrypt(_binascii.unhexlify(d))).decode('utf-8') for d in data]
+        return [_binascii.hexlify(x25519.encrypt(
+            _binascii.unhexlify(d))).decode('utf-8') for d in data]

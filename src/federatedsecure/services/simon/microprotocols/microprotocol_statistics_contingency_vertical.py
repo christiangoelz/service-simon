@@ -2,8 +2,10 @@ import secrets as _secrets
 
 from federatedsecure.services.simon.caches.cache import Cache
 from federatedsecure.services.simon.caches.additive import CacheAdditive
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
-from federatedsecure.services.simon.accumulators.accumulator_statistics_contingency import AccumulatorStatisticsContingency
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+from federatedsecure.services.simon.accumulators.\
+    accumulator_statistics_contingency import AccumulatorStatisticsContingency
 
 
 class MicroprotocolStatisticsContingencyVertical(Microprotocol):
@@ -65,12 +67,12 @@ class MicroprotocolStatisticsContingencyVertical(Microprotocol):
         self.network.broadcast(0, 'checkpoint2')
         return 2, None
 
-    def stage_2(self, args):
+    def stage_2(self, _):
         self.register_stage(4, [*self.keys.keys()], self.stage_final)
         self.network.broadcast(0, 'checkpoint3')
         return 3, None
 
-    def stage_3(self, args):
+    def stage_3(self, _):
         for key in self.keys:
             keyx, keyy = self.keys[key]
             if self.network.myself == 0:
@@ -84,7 +86,7 @@ class MicroprotocolStatisticsContingencyVertical(Microprotocol):
 
         table = {}
         mode = None
-        max = -1
+        maxi = -1
         for tag in args:
             if tag == 'stage':
                 continue
@@ -94,8 +96,8 @@ class MicroprotocolStatisticsContingencyVertical(Microprotocol):
             if keyx not in table:
                 table[keyx] = {}
             table[keyx][keyy] = args[tag]['size_intersection']
-            if args[tag]['size_intersection'] > max:
-                max = args[tag]['size_intersection']
+            if args[tag]['size_intersection'] > maxi:
+                maxi = args[tag]['size_intersection']
                 mode = self.keys[tag]
 
         return -1, {'inputs': 2, 'result': {'mode': mode, 'table': table}}

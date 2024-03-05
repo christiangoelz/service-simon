@@ -17,7 +17,8 @@ class MicroserviceSimon:
         else:
             return None
 
-    def create_task(self, microprotocol, network, parameters=None, task_id=None, parent=None):
+    def create_task(self, microprotocol, network,
+                    parameters=None, task_id=None, parent=None):
 
         if task_id is None:
             task_id = str(_uuid.uuid4())
@@ -25,7 +26,8 @@ class MicroserviceSimon:
         if parameters is None:
             parameters = {}
 
-        task = TaskSimon(self, network, microprotocol, parameters, task_id, parent)
+        task = TaskSimon(self, network, microprotocol,
+                         parameters, task_id, parent)
 
         for item in self._the_cache:
             if item['task_id'] == task_id:
@@ -38,7 +40,12 @@ class MicroserviceSimon:
 
         task_id = invitation['task_id']
 
-        task = TaskSimon(self, network, invitation['microprotocol'], invitation['parameters'], task_id, invitation['parent'])
+        task = TaskSimon(self,
+                         network,
+                         invitation['microprotocol'],
+                         invitation['parameters'],
+                         task_id,
+                         invitation['parent'])
 
         for item in self._the_cache:
             if item['task_id'] == task_id:

@@ -2,11 +2,16 @@ import binascii as _binascii
 import secrets as _secrets
 import hashlib as _hashlib
 
-from federatedsecure.services.simon.caches.cache import Cache
-from federatedsecure.services.simon.caches.additive import CacheAdditive
-from federatedsecure.services.simon.caches.functional import CacheFunctional
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
-from federatedsecure.services.simon.crypto.x25519x448 import X25519
+from federatedsecure.services.simon.caches.cache \
+    import Cache
+from federatedsecure.services.simon.caches.additive \
+    import CacheAdditive
+from federatedsecure.services.simon.caches.functional \
+    import CacheFunctional
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+from federatedsecure.services.simon.crypto.x25519x448 \
+    import X25519
 
 
 class MicroprotocolSetIntersectionSize(Microprotocol):
@@ -19,14 +24,24 @@ class MicroprotocolSetIntersectionSize(Microprotocol):
         self.num_nodes = len(properties['nodes'])
 
         self.register_cache('input', Cache())
-        self.register_stage(0, ['input'], self.stage_0)
+        self.register_stage(0,
+                            ['input'],
+                            self.stage_0)
 
         for i in range(self.num_nodes - 1):
             self.register_cache(f'stage{i+1}', Cache())
-            self.register_stage(i+1, [f'stage{i+1}'], self.stage_i)
+            self.register_stage(i+1,
+                                [f'stage{i+1}'],
+                                self.stage_i)
 
-        self.register_cache(f'stage{self.num_nodes}', CacheFunctional(lambda x, y: set(x).intersection(set(y)), self.num_nodes, self.num_nodes))  # lambda x, y: set(x).intersection(set(y)), n, n))
-        self.register_stage(self.num_nodes, [f'stage{self.num_nodes}', 'samples'], self.stage_n)
+        self.register_cache(f'stage{self.num_nodes}',
+                            CacheFunctional(lambda x, y:
+                                            set(x).intersection(set(y)),
+                                            self.num_nodes, self.num_nodes))
+
+        self.register_stage(self.num_nodes,
+                            [f'stage{self.num_nodes}', 'samples'],
+                            self.stage_n)
 
         self.register_cache('samples', CacheAdditive(minimum=self.num_nodes))
 
@@ -34,7 +49,10 @@ class MicroprotocolSetIntersectionSize(Microprotocol):
 
     def stage_0(self, args):
         self.network.broadcast(args['input']['samples'], 'samples')
-        return self.stage_i({'stage': 0, 'stage0': [_hashlib.sha3_256(item.encode("utf-8")).hexdigest() for item in args['input']['set']]})
+        return self.stage_i({'stage': 0,
+                             'stage0': [_hashlib.sha3_256(
+                                 item.encode("utf-8")).hexdigest()
+                                        for item in args['input']['set']]})
 
     def stage_i(self, args):
         stage = args['stage']
@@ -49,9 +67,10 @@ class MicroprotocolSetIntersectionSize(Microprotocol):
 
     def stage_n(self, args):
         return -1, {'inputs': self.num_nodes,
-                    'result': {
-                        'size_intersection': len(args[f'stage{args["stage"]}'])}}
+                    'result': { 'size_intersection':
+                                    len(args[f'stage{args["stage"]}'])}}
 
     def encrypt(self, data):
         x25519 = X25519(self.secret_key)
-        return [_binascii.hexlify(x25519.encrypt(_binascii.unhexlify(d))).decode('utf-8') for d in data]
+        return [_binascii.hexlify(x25519.encrypt(
+            _binascii.unhexlify(d))).decode('utf-8') for d in data]

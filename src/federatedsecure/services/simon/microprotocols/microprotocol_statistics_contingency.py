@@ -3,8 +3,10 @@ import secrets as _secrets
 from federatedsecure.services.simon.caches.cache import Cache
 from federatedsecure.services.simon.caches.additive import CacheAdditive
 from federatedsecure.services.simon.caches.functional import CacheFunctional
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
-from federatedsecure.services.simon.accumulators.accumulator_statistics_contingency import AccumulatorStatisticsContingency
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+from federatedsecure.services.simon.accumulators.\
+    accumulator_statistics_contingency import AccumulatorStatisticsContingency
 
 
 class MicroprotocolStatisticsContingency(Microprotocol):
@@ -17,10 +19,14 @@ class MicroprotocolStatisticsContingency(Microprotocol):
         self.n = self.network.count
 
         self.register_cache('input', Cache())
-        self.register_cache('keysx', CacheFunctional(lambda x, y: set(x).union(set(y)), self.n, self.n))
-        self.register_cache('keysy', CacheFunctional(lambda x, y: set(x).union(set(y)), self.n, self.n))
-        self.register_cache('checkpoint2', CacheAdditive(minimum=self.n))
-        self.register_cache('checkpoint3', CacheAdditive(minimum=self.n))
+        self.register_cache('keysx', CacheFunctional(
+            lambda x, y: set(x).union(set(y)), self.n, self.n))
+        self.register_cache('keysy', CacheFunctional(
+            lambda x, y: set(x).union(set(y)), self.n, self.n))
+        self.register_cache('checkpoint2',
+                            CacheAdditive(minimum=self.n))
+        self.register_cache('checkpoint3',
+                            CacheAdditive(minimum=self.n))
 
         self.register_stage(0, ['input'], self.stage_0)
         self.register_stage(1, ['keysx', 'keysy'], self.stage_1)
@@ -59,12 +65,12 @@ class MicroprotocolStatisticsContingency(Microprotocol):
         self.network.broadcast(0, 'checkpoint2')
         return 2, None
 
-    def stage_2(self, args):
+    def stage_2(self, _):
         self.register_stage(4, self.tags.keys(), self.stage_final)
         self.network.broadcast(0, 'checkpoint3')
         return 3, None
 
-    def stage_3(self, args):
+    def stage_3(self, _):
         for tag in self.tags:
             self.start_pipeline('SecureSum', tag, self.tags[tag])
         return 4, None
@@ -73,7 +79,7 @@ class MicroprotocolStatisticsContingency(Microprotocol):
 
         table = {}
         mode = None
-        max = -1
+        maxi = -1
         for tag in args:
             if tag == 'stage':
                 continue
@@ -81,8 +87,8 @@ class MicroprotocolStatisticsContingency(Microprotocol):
             if keyx not in table:
                 table[keyx] = {}
             table[keyx][keyy] = args[tag]['sum']
-            if args[tag]['sum'] > max:
-                max = args[tag]['sum']
+            if args[tag]['sum'] > maxi:
+                maxi = args[tag]['sum']
                 mode = self.keys[tag]
 
         return -1, {'inputs': self.n, 'result': {

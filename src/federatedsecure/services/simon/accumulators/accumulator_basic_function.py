@@ -3,8 +3,9 @@ from federatedsecure.services.simon.accumulators.accumulator import Accumulator
 
 class AccumulatorBasicFunction(Accumulator):
 
-    """an accumulator that stores type X and is defined by an update function that takes
-    X and Y as input and returns a result of type X. often X and Y will be the same type."""
+    """an accumulator that stores type X and is defined by an update
+    function that takes X and Y as input and returns a result of type X.
+    often X and Y will be the same type."""
 
     def __init__(self, initial, function):
         self.samples = 0
@@ -12,12 +13,14 @@ class AccumulatorBasicFunction(Accumulator):
         self.function = function
 
     def add(self, other):
-        """combine another accumulator storing data type Y into this one"""
+        """combine another accumulator storing
+        data type Y into this one"""
         self.samples = self.samples + other.samples
         self.data = self.function(self.data, other.data)
 
     def update(self, data):
-        """update this accumulator by a list of data items or by a single data item"""
+        """update this accumulator by a list of
+        data items or by a single data item"""
         if isinstance(data, list):
             self.samples = self.samples + len(data)
             for datum in data:

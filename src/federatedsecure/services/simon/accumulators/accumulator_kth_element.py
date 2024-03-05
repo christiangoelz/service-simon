@@ -1,8 +1,10 @@
 from federatedsecure.services.simon.accumulators.accumulator import Accumulator
 
+
 class AccumulatorKthElement(Accumulator):
 
-    """an accumulator that keeps track of parameters used to find the kth rank of an array"""
+    """an accumulator that keeps track of parameters
+    used to find the kth rank of an array"""
 
     def __init__(self, _=None):
         self.samples = None

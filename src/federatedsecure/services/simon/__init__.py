@@ -1,4 +1,5 @@
-"""SImple Multiparty computatiON (SIMON) service for Federated Secure Computing"""
+"""SImple Multiparty computatiON (SIMON)
+service for Federated Secure Computing"""
 
 from federatedsecure.services.simon.microservice import MicroserviceSimon
 

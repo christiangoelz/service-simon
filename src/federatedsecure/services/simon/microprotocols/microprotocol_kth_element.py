@@ -1,8 +1,12 @@
 import math as _math
 
-from federatedsecure.services.simon.caches.cache import Cache
-from federatedsecure.services.simon.caches.additive import CacheAdditive
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
+from federatedsecure.services.simon.caches.cache \
+    import Cache
+from federatedsecure.services.simon.caches.additive \
+    import CacheAdditive
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
+
 
 class MicroprotocolKthElement(Microprotocol):
 
@@ -34,7 +38,11 @@ class MicroprotocolKthElement(Microprotocol):
         self._register_stage_i()
 
     def _register_stage_i(self):
-        self.register_stage(self.i+1, [f'l{self.i}',f'g{self.i}','samples'], self.stage_next)
+        self.register_stage(self.i+1,
+                            [f'l{self.i}',
+                             f'g{self.i}',
+                             'samples'],
+                            self.stage_next)
 
     def stage_initial(self, args):
         self.network.broadcast(args['input']['samples'], 'samples')

@@ -1,10 +1,13 @@
-from federatedsecure.services.simon.microprotocols.create import create as create_microprotocol
-from federatedsecure.services.simon.accumulators.create import create as create_accumulator
+from federatedsecure.services.simon.microprotocols.create \
+    import create as create_microprotocol
+from federatedsecure.services.simon.accumulators.create \
+    import create as create_accumulator
 
 
 class TaskSimon:
 
-    def __init__(self, microservice, network, microprotocol, parameters, task_id, parent):
+    def __init__(self, microservice, network, microprotocol,
+                 parameters, task_id, parent):
 
         self.microservice = microservice
         self.task_id = task_id
@@ -59,7 +62,8 @@ class TaskSimon:
         message = body['message']
 
         if self.microprotocol is None:
-            self.microprotocol = self.microprotocol_class(self.microservice, properties, message['receiver'])
+            self.microprotocol = self.microprotocol_class(
+                self.microservice, properties, message['receiver'])
 
         self.parent = body['task']['parent']
         self.parameters = body['task']['parameters']

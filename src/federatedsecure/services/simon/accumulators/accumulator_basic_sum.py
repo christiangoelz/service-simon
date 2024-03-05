@@ -1,4 +1,5 @@
-from federatedsecure.services.simon.accumulators.accumulator_basic_function import AccumulatorBasicFunction
+from federatedsecure.services.simon.accumulators.\
+     accumulator_basic_function import AccumulatorBasicFunction
 
 
 class AccumulatorBasicSum(AccumulatorBasicFunction):

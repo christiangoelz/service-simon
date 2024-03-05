@@ -2,7 +2,8 @@ from federatedsecure.server.bus import Bus
 
 
 """
-Provides a special interface that creates a local microservices bus and routes API requests to it
+Provides a special interface that creates a local 
+microservices bus and routes API requests to it
 """
 
 

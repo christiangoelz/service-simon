@@ -1,7 +1,8 @@
 import numpy as _numpy
 
 from federatedsecure.services.simon.caches.cache import Cache
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
 
 
 class MicroprotocolStatisticsRegressionOLSVertical(Microprotocol):
@@ -22,9 +23,12 @@ class MicroprotocolStatisticsRegressionOLSVertical(Microprotocol):
             n = _numpy.matmul(xt, x)
             ninv = _numpy.linalg.inv(n)
             mp = _numpy.matmul(ninv, xt)
-            self.start_pipeline('SecureMatrixMultiplication', 'final', [mp.tolist()])
+            self.start_pipeline('SecureMatrixMultiplication',
+                                'final', [mp.tolist()])
         else:
-            self.start_pipeline('SecureMatrixMultiplication', 'final', [[[x] for x in args['input']]])
+            self.start_pipeline('SecureMatrixMultiplication',
+                                'final',
+                                [[[x] for x in args['input']]])
         return 1, None
 
     def stage_1(self, args):

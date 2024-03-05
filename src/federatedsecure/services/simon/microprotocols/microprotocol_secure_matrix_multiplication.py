@@ -1,7 +1,9 @@
 import numpy as _numpy
 
-from federatedsecure.services.simon.caches.cache import Cache
-from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
+from federatedsecure.services.simon.caches.cache \
+    import Cache
+from federatedsecure.services.simon.microprotocols.microprotocol \
+    import Microprotocol
 
 
 class MicroprotocolSecureMatrixMultiplication(Microprotocol):
@@ -28,7 +30,8 @@ class MicroprotocolSecureMatrixMultiplication(Microprotocol):
 
     def stage_0(self, args):
         self.M = _numpy.array(args['input'])
-        self.network.broadcast(self.M.shape, 'dimX' if self.network.myself == 0 else 'dimY')
+        self.network.broadcast(self.M.shape,
+                               'dimX' if self.network.myself == 0 else 'dimY')
         return 1, None
 
     def stage_1(self, args):

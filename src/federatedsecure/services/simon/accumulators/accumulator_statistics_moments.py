@@ -65,8 +65,12 @@ class AccumulatorStatisticsMoments(Accumulator):
         self.centered[5] += temp3 * temp3
 
     def encrypt_data_for_upload(self, nonce, power=1):
-        uncentered = [nonce.encrypt_numerical(self.uncentered[i], power=(i+1)*power) for i in range(6)]
-        centered = [nonce.encrypt_numerical(self.centered[i], power=(i+1)*power) for i in range(6)]
+        uncentered = [
+            nonce.encrypt_numerical(self.uncentered[i],
+                                    power=(i+1)*power) for i in range(6)]
+        centered = [
+            nonce.encrypt_numerical(self.centered[i],
+                                    power=(i+1)*power) for i in range(6)]
         return {'samples': self.samples,
                 'center': nonce.encrypt_numerical(self.center, power=power),
                 'uncentered': uncentered,
@@ -78,12 +82,15 @@ class AccumulatorStatisticsMoments(Accumulator):
         self.center = center
 
     def recenter(self, k, center):
-        pascal = [[1.0], [1.0, 1.0], [1.0, 2.0, 1.0], [1.0, 3.0, 3.0, 1.0], [1.0, 4.0, 6.0, 4.0, 1.0],
-                  [1.0, 5.0, 10.0, 10.0, 5.0, 1.0], [1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0]]
+        pascal = [[1.0], [1.0, 1.0], [1.0, 2.0, 1.0], [1.0, 3.0, 3.0, 1.0],
+                  [1.0, 4.0, 6.0, 4.0, 1.0], [1.0, 5.0, 10.0, 10.0, 5.0, 1.0],
+                  [1.0, 6.0, 15.0, 20.0, 15.0, 6.0, 1.0]]
 
         recentered = pow(self.center - center, k + 1) * self.samples
         for j in range(k + 1):
-            recentered += self.centered[k - j] * (pascal[k + 1][j] * pow(self.center - center, j))
+            recentered += (self.centered[k - j]
+                           * (pascal[k + 1][j]
+                              * pow(self.center - center, j)))
 
         return recentered
 

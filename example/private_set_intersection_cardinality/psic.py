@@ -1,7 +1,6 @@
 import random
 import datetime
 import sys
-import time
 
 import federatedsecure.client
 

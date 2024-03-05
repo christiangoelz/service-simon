@@ -4,16 +4,15 @@ from federatedsecure.services.simon.caches.cache import Cache
 from federatedsecure.services.simon.caches.additive import CacheAdditive
 from federatedsecure.services.simon.microprotocols.microprotocol import Microprotocol
 
-"""
-Implements FIND-RANKED-ELEMENT-MULTIPARTY from [1].
-
-[1] Aggarwal, G., Mishra, N. & Pinkas, B. Secure Computation of the Median
-(and Other Elements of Specified Ranks). J Cryptol 23, 373–401 (2010).
-https://doi.org/10.1007/s00145-010-9059-9
-"""
-
-
 class MicroprotocolSecureMedian(Microprotocol):
+
+    """
+    Implements FIND-RANKED-ELEMENT-MULTIPARTY from [1].
+
+    [1] Aggarwal, G., Mishra, N. & Pinkas, B. Secure Computation of the Median
+    (and Other Elements of Specified Ranks). J Cryptol 23, 373–401 (2010).
+    https://doi.org/10.1007/s00145-010-9059-9
+    """
 
     def __init__(self, microservice, properties, myself):
         super().__init__(microservice, properties, myself)
@@ -57,31 +56,31 @@ class MicroprotocolSecureMedian(Microprotocol):
 
     def stage_2(self, args):
         if args['samples'] % 2 == 0:
-            ks = [args['samples'] // 2, (args['samples'] // 2) + 1]
-            self.register_stage(3, ['samples','k0','k1'], self.stage_3)
+            ranks = [args['samples'] // 2, (args['samples'] // 2) + 1]
+            self.register_stage(3, ['samples','rank0','rank1'], self.stage_3)
             self.even = True
         else:
-            ks = [args['samples'] // 2 + 1]
-            self.register_stage(3, ['samples','k0'], self.stage_3)
+            ranks = [args['samples'] // 2 + 1]
+            self.register_stage(3, ['samples','rank0'], self.stage_3)
             self.even = False
 
-        for i, k in enumerate(ks):
-            self.register_cache(f'k{i}', Cache())
-            self.start_pipeline('FindKRank',
-                                f'k{i}', 
+        for i, rank in enumerate(ranks):
+            self.register_cache(f'rank{i}', Cache())
+            self.start_pipeline('KthElement',
+                                f'rank{i}', 
                                 [{'array': self.array,
-                                'k': k,
-                                'a': args['range']['minimum'],
-                                'b': args['range']['maximum']}])
+                                'rank': rank,
+                                'lower_bound': args['range']['minimum'],
+                                'upper_bound': args['range']['maximum']}])
         return 3, None
 
     def stage_3(self,args):
-        k0 = args['k0']['item'] / (10**self.digits_after)
+        rank0 = args['rank0']['item'] / (10**self.digits_after)
         if self.even:
-            k1 = args['k1']['item'] / (10**self.digits_after)
-            median = (k0 + k1)/ 2
+            rank1 = args['rank1']['item'] / (10**self.digits_after)
+            median = (rank0 + rank1)/ 2
         else:
-            median = k0
+            median = rank0
         return -1, {'inputs': self.n,
                     'result': {
                         'median': median}}

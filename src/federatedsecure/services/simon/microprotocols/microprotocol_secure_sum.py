@@ -16,7 +16,6 @@ class MicroprotocolSecureSum(Microprotocol):
         self.digits_after = properties['parameters'].get('digits_after', 12)
 
         self.register_cache('input', Cache())
-        self.register_cache('samples', CacheAdditive(minimum=self.n))
         self.register_cache('intermediate', CacheAdditive(minimum=self.n))
         self.register_cache('final', CacheAdditive(minimum=self.n))
 
@@ -25,7 +24,6 @@ class MicroprotocolSecureSum(Microprotocol):
         self.register_stage(2, ['final'], self.stage_2)
 
     def stage_0(self, args):
-        self.network.broadcast(args['input']['samples'], 'samples')
         o = args['input']['sum']
         s = 0
         for i in range(self.network.count - 1):
@@ -42,5 +40,4 @@ class MicroprotocolSecureSum(Microprotocol):
     def stage_2(self, args):
         return -1, {'inputs': self.n,
                     'result': {
-                        'samples': self.caches['samples'].get_data(),
                         'sum': args['final'] / (10 ** self.digits_after)}}

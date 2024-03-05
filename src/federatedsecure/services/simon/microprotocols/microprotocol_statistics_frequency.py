@@ -16,7 +16,6 @@ class MicroprotocolStatisticsFrequency(Microprotocol):
 
         self.n = self.network.count
 
-        self.register_cache('samples', CacheAdditive(minimum=self.n))
         self.register_cache('input', Cache())
         self.register_cache('keys', CacheFunctional(lambda x, y: set(x).union(set(y)), self.n, self.n))
         self.register_cache('checkpoint2', CacheAdditive(minimum=self.n))
@@ -36,8 +35,6 @@ class MicroprotocolStatisticsFrequency(Microprotocol):
 
     def stage_0(self, args):
 
-        self.network.broadcast(args['input']['samples'], 'samples')
-
         self.histogram = args['input']['histogram']
         self.network.broadcast([*self.histogram.keys()], 'keys')
         return 1, None
@@ -53,7 +50,7 @@ class MicroprotocolStatisticsFrequency(Microprotocol):
         return 2, None
 
     def stage_2(self, args):
-        self.register_stage(4, ['samples', *self.tags.keys()], self.stage_final)
+        self.register_stage(4, self.tags.keys(), self.stage_final)
         self.network.broadcast(0, 'checkpoint3')
         return 3, None
 
@@ -70,14 +67,11 @@ class MicroprotocolStatisticsFrequency(Microprotocol):
         for tag in args:
             if tag == 'stage':
                 continue
-            if tag == 'samples':
-                continue
             histogram[tag[4:]] = args[tag]['sum']
             if args[tag]['sum'] > max:
                 max = args[tag]['sum']
                 mode = tag[4:]
 
         return -1, {'inputs': self.n, 'result': {
-                       'samples': args['samples'],
                        'mode': mode,
                        'histogram': histogram}}

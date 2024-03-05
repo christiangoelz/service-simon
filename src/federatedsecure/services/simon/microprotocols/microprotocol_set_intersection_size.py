@@ -50,8 +50,6 @@ class MicroprotocolSetIntersectionSize(Microprotocol):
     def stage_n(self, args):
         return -1, {'inputs': self.num_nodes,
                     'result': {
-                        'samples': args['samples'],
-                        'size_data': self.sizes,
                         'size_intersection': len(args[f'stage{args["stage"]}'])}}
 
     def encrypt(self, data):

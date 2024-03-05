@@ -31,17 +31,14 @@ class MicroprotocolSetIntersection(Microprotocol):
         self.register_cache('reverse', Cache())
         self.register_stage(self.n+1, ['reverse'], self.stage_reverse)
 
-        self.register_cache('samples', CacheAdditive(minimum=self.n))
-
         self.register_cache('final', Cache())
-        self.register_stage(self.n+2, ['final', 'samples'], self.stage_final)
+        self.register_stage(self.n+2, ['final'], self.stage_final)
 
         self.sizes = [0] * self.n
         self.lut = {}
         self.input_lut = {}
 
     def stage_0(self, args):
-        self.network.broadcast(args['input']['samples'], 'samples')
         encrypted = []
         for item in args['input']['set']:
             enc = _hashlib.sha3_256(item.encode("utf-8")).hexdigest()
@@ -82,8 +79,6 @@ class MicroprotocolSetIntersection(Microprotocol):
     def stage_final(self, args):
         return -1, {'inputs': self.n,
                     'result': {
-                        'samples': args['samples'],
-                        'size_data': self.sizes,
                         'size_intersection': len(args['final']),
                         'intersection': [self.input_lut[enc] for enc in args['final']]}}
 

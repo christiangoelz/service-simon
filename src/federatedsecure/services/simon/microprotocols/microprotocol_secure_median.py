@@ -39,7 +39,7 @@ class MicroprotocolSecureMedian(Microprotocol):
     def stage_0(self, args):
         max_decimals = self._max_decimals(args['input']['array'])
         self.array = args['input']['array']
-        self.network.broadcast(args['input']['samples'], 'samples')
+        self.network.broadcast(len(args['input']['array']), 'samples')
         self.start_pipeline('MinimumMaximum',
                             'digits_after',
                             [{'minimum': 0,
@@ -84,7 +84,6 @@ class MicroprotocolSecureMedian(Microprotocol):
             median = k0
         return -1, {'inputs': self.n,
                     'result': {
-                        'samples': args['samples'],
                         'median': median}}
 
     def _max_decimals(self, array):

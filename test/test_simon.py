@@ -14,7 +14,7 @@ class TestSimon(TestAssertions):
     Tests the SIMON microservice
     """
 
-    def test_basic_sum(self):
+    def test_secure_sum(self):
         """tests the SecureSum microprotocol for two parties"""
         self.run_two_party_test(
             microprotocol='SecureSum',
@@ -22,7 +22,7 @@ class TestSimon(TestAssertions):
             data_bob=1234.56789,
             correct={'sum': 1358.024679})
 
-    def test_basic_sum_3p(self):
+    def test_secure_sum_3p(self):
         """tests the SecureSum microprotocol for three parties"""
         self.run_three_party_test(
             microprotocol='SecureSum',
@@ -89,8 +89,7 @@ class TestSimon(TestAssertions):
             data_alice=[['A', 'B', 'C', 'D', 'E', 'F', 'G'],
                         ['E', 'C', 'B', 'A', 'D']],
             data_bob=[['C', 'F', 'A'], ['C', 'F', 'A', 'D']],
-            correct={'samples': 4,
-                     'size_intersection': 2,
+            correct={'size_intersection': 2,
                      'intersection': ['A', 'C']})
 
     def test_set_intersection_size(self):
@@ -100,7 +99,7 @@ class TestSimon(TestAssertions):
             data_alice=[['A', 'B', 'C', 'D', 'E', 'F', 'G'],
                         ['E', 'C', 'B', 'A', 'D']],
             data_bob=[['C', 'F', 'A'], ['C', 'F', 'A', 'D']],
-            correct={'samples': 4, 'size_intersection': 2})
+            correct={'size_intersection': 2})
 
     def test_statistics_bivariate(self):
         """tests the StatisticsBivariate microprotocol for two parties"""
@@ -122,8 +121,7 @@ class TestSimon(TestAssertions):
             microprotocol='StatisticsFrequency',
             data_alice=['A', 'A', 'B', 'C', 'C', 'C'],
             data_bob=['A', 'B', 'C', 'B', 'C', 'B', 'B', 'C', 'C'],
-            correct={'samples': 15,
-                     'mode': 'C',
+            correct={'mode': 'C',
                      'histogram': {'A': 3, 'B': 5, 'C': 7}})
 
     def test_statistics_contingency(self):
@@ -136,8 +134,7 @@ class TestSimon(TestAssertions):
             data_bob=[('non-smoker', 'female'), ('smoker', 'female'),
                       ('smoker', 'male'), ('non-smoker', 'female'),
                       ('non-smoker', 'female'), ('non-smoker', 'male')],
-            correct={'samples': 12,
-                     'mode': ('non-smoker', 'female'),
+            correct={'mode': ('non-smoker', 'female'),
                      'table': {'non-smoker': {'male': 1, 'female': 5},
                                'smoker': {'male': 4, 'female': 2}}})
 
@@ -237,6 +234,8 @@ class TestSimon(TestAssertions):
         self.assertEqual(result_a['inputs'], 2)
         for key in correct:
             self.outer_assertion(correct[key], result_a['result'][key], key)
+        for key in result_a['result']:
+            self.outer_assertion(correct[key], result_a['result'][key], key)
 
     def run_three_party_test(self, microprotocol, data_alice, data_bob,
                              data_charlie, correct):
@@ -295,4 +294,6 @@ class TestSimon(TestAssertions):
         result_a = api_a.download(repr_res_a)
         self.assertEqual(result_a['inputs'], 3)
         for key in correct:
+            self.outer_assertion(correct[key], result_a['result'][key], key)
+        for key in result_a['result']:
             self.outer_assertion(correct[key], result_a['result'][key], key)
